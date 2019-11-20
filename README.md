@@ -1,4 +1,4 @@
-# Airbnb Swift Style Guide
+# InHome Swift Style Guide
 
 ## Goals
 
@@ -6,20 +6,20 @@ Following this style guide should:
 
 * Make it easier to read and begin understanding unfamiliar code.
 * Make code easier to maintain.
+* Make it easier to search the codebase
 * Reduce simple programmer errors.
 * Reduce cognitive load while coding.
-* Keep discussions on diffs focused on the code's logic rather than its style.
+* Keep discussions on diffs focused on the code's logic, rather than its style.
 
-Note that brevity is not a primary goal. Code should be made more concise only if other good code qualities (such as readability, simplicity, and clarity) remain equal or are improved.
+Note that brevity is not a primary goal. Code should be made more concise only if other good code qualities (such as readability, simplicity and clarity) remain equal or are improved.
 
 ## Guiding Tenets
 
-* This guide is in addition to the official [Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/). These rules should not contradict that document.
+* This guide incorporates by reference the official [Swift API Design Guidelines](https://swift.org/documentation/api-design-guidelines/). These rules should not contradict that document.
 * These rules should not fight Xcode's <kbd>^</kbd> + <kbd>I</kbd> indentation behavior.
-* We strive to make every rule lintable:
-  * If a rule changes the format of the code, it needs to be able to be reformatted automatically (either using [SwiftLint](https://github.com/realm/SwiftLint) autocorrect or [SwiftFormat](https://github.com/nicklockwood/SwiftFormat)).
-  * For rules that don't directly change the format of the code, we should have a lint rule that throws a warning.
-  * Exceptions to these rules should be rare and heavily justified.
+* As much as possible, we strive to make every rule enforceable via [SwiftLint](https://github.com/realm/SwiftLint):
+  * Wherever possible, we should have a lint rule that throws a warning.
+  * Exceptions to these rules (places where `swiftlint` is disabled) should be rare and heavily justified.
 
 ## Table of Contents
 
@@ -37,9 +37,7 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
 ## Xcode Formatting
 
-_You can enable the following settings in Xcode by running [this script](resources/xcode_settings.bash), e.g. as part of a "Run Script" build phase._
-
-* <a id='column-width'></a>(<a href='#column-width'>link</a>) **Each line should have a maximum column width of 100 characters.**
+* <a id='column-width'></a>(<a href='#column-width'>link</a>) **Each line should have a maximum column width of 150 characters.**
 
   <details>
 
@@ -48,7 +46,7 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
   </details>
 
-* <a id='spaces-over-tabs'></a>(<a href='#spaces-over-tabs'>link</a>) **Use 2 spaces to indent lines.**
+* <a id='spaces-over-tabs'></a>(<a href='#spaces-over-tabs'>link</a>) **Use 4 spaces to indent lines.**
 
 * <a id='trailing-whitespace'></a>(<a href='#trailing-whitespace'>link</a>) **Trim trailing whitespace in all lines.** [![SwiftFormat: trailingSpace](https://img.shields.io/badge/SwiftFormat-trailingSpace-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#trailingSpace)
 
@@ -196,50 +194,23 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
   </details>
 
-* <a id='hint-at-types'></a>(<a href='#hint-at-types'>link</a>) **Include a hint about type in a name if it would otherwise be ambiguous.**
+* <a id='hint-at-types'></a>(<a href='#hint-at-types'>link</a>) **By convention, UIKit variable names should include a hint about type. With other types, you may drop redundant type information and rely on the compiler to enforce type matching.**
 
   <details>
 
   ```swift
   // WRONG
-  let title: String
   let cancel: UIButton
+  let title: UILabel
+  let messageString: String
+  let frameRect: CGRect
+  
 
   // RIGHT
-  let titleText: String
   let cancelButton: UIButton
-  ```
-
-  </details>
-
-* <a id='past-tense-events'></a>(<a href='#past-tense-events'>link</a>) **Event-handling functions should be named like past-tense sentences.** The subject can be omitted if it's not needed for clarity.
-
-  <details>
-
-  ```swift
-  // WRONG
-  class ExperiencesViewController {
-
-    private func handleBookButtonTap() {
-      // ...
-    }
-
-    private func modelChanged() {
-      // ...
-    }
-  }
-
-  // RIGHT
-  class ExperiencesViewController {
-
-    private func didTapBookButton() {
-      // ...
-    }
-
-    private func modelDidChange() {
-      // ...
-    }
-  }
+  let titleLabel: UILabel
+  let message: String
+  let frame: CGRect
   ```
 
   </details>
@@ -257,6 +228,32 @@ _You can enable the following settings in Xcode by running [this script](resourc
   // RIGHT
   class Account {
     // ...
+  }
+  ```
+
+  </details>
+  
+* <a id='use-nested-types'></a>(<a href='#avoid-class-prefixes'>link</a>) **When type's only use is as a property of another type, nest that type in the type that uses it.**
+
+  <details>
+
+  ```swift
+  // WRONG
+  enum ProductReturnReason {
+     case badSize, changedMind
+  }
+  
+  class ProductReturn {
+     let reason: ProductReturnReason
+  }
+
+  // RIGHT  
+  class ProductReturn {
+    enum Reason {
+      case badSize, changedMind
+    }
+
+     let reason: ProductReturnReason
   }
   ```
 
@@ -341,29 +338,7 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
   </details>
 
-* <a id='trailing-comma-array'></a>(<a href='#trailing-comma-array'>link</a>) **Add a trailing comma on the last element of a multi-line array.** [![SwiftFormat: trailingCommas](https://img.shields.io/badge/SwiftFormat-trailingCommas-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#trailingCommas)
-
-  <details>
-
-  ```swift
-  // WRONG
-  let rowContent = [
-    listingUrgencyDatesRowContent(),
-    listingUrgencyBookedRowContent(),
-    listingUrgencyBookedShortRowContent()
-  ]
-
-  // RIGHT
-  let rowContent = [
-    listingUrgencyDatesRowContent(),
-    listingUrgencyBookedRowContent(),
-    listingUrgencyBookedShortRowContent(),
-  ]
-  ```
-
-  </details>
-
-* <a id='name-tuple-elements'></a>(<a href='#name-tuple-elements'>link</a>) **Name members of tuples for extra clarity.** Rule of thumb: if you've got more than 3 fields, you should probably be using a struct.
+* <a id='name-tuple-elements'></a>(<a href='#name-tuple-elements'>link</a>) **Name members of tuples for extra clarity.** Rule of thumb: if you've got more than 2 fields, you should probably be using a struct.
 
   <details>
 
@@ -697,12 +672,13 @@ _You can enable the following settings in Xcode by running [this script](resourc
   //WRONG
   class MyClass {
 
-    func request(completion: () -> Void) {
+    func request(completion: (Response) -> Void) {
       API.request() { [weak self] response in
-        if let strongSelf = self {
-          // Processing and side effects
+        if let self = self {
+          self.fetchedResponse = response
+          // Do other complicated things
         }
-        completion()
+        completion(response)
       }
     }
   }
@@ -712,20 +688,42 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
     func request(completion: () -> Void) {
       API.request() { [weak self] response in
-        guard let strongSelf = self else { return }
-        strongSelf.doSomething(strongSelf.property)
-        completion()
+        self?.doSomething(with: response)
       }
     }
 
-    func doSomething(nonOptionalParameter: SomeClass) {
-      // Processing and side effects
+    func doSomething(with response: Response) {
+      fetchedResponse = response
+      // Do other complicated things
     }
   }
   ```
 
   </details>
 
+* <a id='complex-callback-block'></a>(<a href='#complex-callback-block'>link</a>) **Don't rename variables in an optional binding**. It is clearer to use the same name after the rebinding, even in the case of `self`.
+
+  <details>
+
+  ```swift
+  //WRONG
+      API.request() { [weak self] response in
+        guard let strongSelf = self, let validResponse = response else {
+          return
+        }
+        // ...
+      }
+
+  // RIGHT
+      API.request() { [weak self] response in
+        guard let self = self, let response = response else {
+          return
+        }
+        // ...
+      }
+  ```
+
+  </details>
 * <a id='guards-at-top'></a>(<a href='#guards-at-top'>link</a>) **Prefer using `guard` at the beginning of a scope.**
 
   <details>
@@ -787,12 +785,12 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
   </details>
 
-* <a id='namespace-using-enums'></a>(<a href='#namespace-using-enums'>link</a>) **Use caseless `enum`s for organizing `public` or `internal` constants and functions into namespaces.** Avoid creating non-namespaced global constants and functions. Feel free to nest namespaces where it adds clarity.
+* <a id='namespace-using-enums'></a>(<a href='#namespace-using-enums'>link</a>) **Use caseless `enum`s or structs for organizing `public` or `internal` constants and functions into namespaces.** Avoid creating non-namespaced global constants and functions. Feel free to nest namespaces where it adds clarity.
 
   <details>
 
   #### Why?
-  Caseless `enum`s work well as namespaces because they cannot be instantiated, which matches their intent.
+  Caseless `enum`s work well as namespaces because they cannot be instantiated, which matches their intent. Structs are ok too though.
 
   ```swift
   enum Environment {
@@ -886,7 +884,7 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
 * <a id='semantic-optionals'></a>(<a href='#semantic-optionals'>link</a>) **Use optionals only when they have semantic meaning.**
 
-* <a id='prefer-immutable-values'></a>(<a href='#prefer-immutable-values'>link</a>) **Prefer immutable values whenever possible.** Use `map` and `compactMap` instead of appending to a new collection. Use `filter` instead of removing elements from a mutable collection.
+* <a id='prefer-immutable-values'></a>(<a href='#prefer-immutable-values'>link</a>) **Prefer immutable values whenever possible.** Use `map` and `compactMap` instead of replacing or removing elements in a collection. Use `filter` instead of removing elements from a mutable collection.
 
   <details>
 
@@ -920,38 +918,6 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
   </details>
 
-* <a id='preconditions-and-asserts'></a>(<a href='#preconditions-and-asserts'>link</a>) **Handle an unexpected but recoverable condition with an `assert` method combined with the appropriate logging in production. If the unexpected condition is not recoverable, prefer a `precondition` method or `fatalError()`.** This strikes a balance between crashing and providing insight into unexpected conditions in the wild. Only prefer `fatalError` over a `precondition` method when the failure message is dynamic, since a `precondition` method won't report the message in the crash report. [![SwiftLint: fatal_error_message](https://img.shields.io/badge/SwiftLint-fatal__error__message-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#fatal-error-message) [![SwiftLint: force_cast](https://img.shields.io/badge/SwiftLint-force__cast-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#force-cast) [![SwiftLint: force_try](https://img.shields.io/badge/SwiftLint-force__try-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#force-try) [![SwiftLint: force_unwrapping](https://img.shields.io/badge/SwiftLint-force__unwrapping-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#force-unwrapping)
-
-  <details>
-
-  ```swift
-  func didSubmitText(_ text: String) {
-    // It's unclear how this was called with an empty string; our custom text field shouldn't allow this.
-    // This assert is useful for debugging but it's OK if we simply ignore this scenario in production.
-    guard !text.isEmpty else {
-      assertionFailure("Unexpected empty string")
-      return
-    }
-    // ...
-  }
-
-  func transformedItem(atIndex index: Int, from items: [Item]) -> Item {
-    precondition(index >= 0 && index < items.count)
-    // It's impossible to continue executing if the precondition has failed.
-    // ...
-  }
-
-  func makeImage(name: String) -> UIImage {
-    guard let image = UIImage(named: name, in: nil, compatibleWith: nil) else {
-      fatalError("Image named \(name) couldn't be loaded.")
-      // We want the error message so we know the name of the missing image.
-    }
-    return image
-  }
-  ```
-
-  </details>
-
 * <a id='static-type-methods-by-default'></a>(<a href='#static-type-methods-by-default'>link</a>) **Default type methods to `static`.**
 
   <details>
@@ -973,28 +939,7 @@ _You can enable the following settings in Xcode by running [this script](resourc
 
   </details>
 
-* <a id='final-classes-by-default'></a>(<a href='#final-classes-by-default'>link</a>) **Default classes to `final`.**
-
-  <details>
-
-  #### Why?
-  If a class needs to be overridden, the author should opt into that functionality by omitting the `final` keyword.
-
-  ```swift
-  // WRONG
-  class SettingsRepository {
-    // ...
-  }
-
-  // RIGHT
-  final class SettingsRepository {
-    // ...
-  }
-  ```
-
-  </details>
-
-* <a id='switch-never-default'></a>(<a href='#switch-never-default'>link</a>) **Never use the `default` case when `switch`ing over an enum.**
+* <a id='switch-never-default'></a>(<a href='#switch-never-default'>link</a>) **Wherever possible, do not use the `default` case when `switch`ing over an enum.**
 
   <details>
 
