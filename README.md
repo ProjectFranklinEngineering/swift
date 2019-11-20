@@ -23,7 +23,7 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
 ## Table of Contents
 
-1. [Xcode Formatting](#xcode-formatting)
+1. [Xcode Formatting](#formatting)
 1. [Naming](#naming)
 1. [Style](#style)
     1. [Functions](#functions)
@@ -35,7 +35,7 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 1. [Contributors](#contributors)
 1. [Amendments](#amendments)
 
-## Xcode Formatting
+## Formatting
 
 * <a id='column-width'></a>(<a href='#column-width'>link</a>) **Each line should have a maximum column width of 150 characters.**
 
@@ -46,10 +46,99 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
   </details>
 
-* <a id='spaces-over-tabs'></a>(<a href='#spaces-over-tabs'>link</a>) **Use 4 spaces to indent lines.**
+* <a id='spaces-over-tabs'></a>(<a href='#spaces-over-tabs'>link</a>) **Use spaces to indent lines.**
 
-* <a id='trailing-whitespace'></a>(<a href='#trailing-whitespace'>link</a>) **Trim trailing whitespace in all lines.** [![SwiftFormat: trailingSpace](https://img.shields.io/badge/SwiftFormat-trailingSpace-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#trailingSpace)
+* <a id='trailing-whitespace'></a>(<a href='#trailing-whitespace'>link</a>) **Trim trailing whitespace in all lines.** 
 
+* <a id='trailing-whitespace'></a>(<a href='#braces'>link</a>) **Braces should open on the same line as the statement but close on a new line** Exception: Short expressions can open and close on the same line. 
+
+* <a id='trailing-whitespace'></a>(<a href='#trailing-whitespace'>link</a>) **Trim trailing whitespace in all lines.** 
+
+* <a id='colon-spacing'></a>(<a href='#colon-spacing'>link</a>) **Place the colon immediately after an identifier, followed by a space.** [![SwiftLint: colon](https://img.shields.io/badge/SwiftLint-colon-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#colon)
+
+  <details>
+
+  ```swift
+  // WRONG
+  var something : Double = 0
+
+  // RIGHT
+  var something: Double = 0
+  ```
+
+  ```swift
+  // WRONG
+  class MyClass : SuperClass {
+    // ...
+  }
+
+  // RIGHT
+  class MyClass: SuperClass {
+    // ...
+  }
+  ```
+
+  ```swift
+  // WRONG
+  var dict = [KeyType:ValueType]()
+  var dict = [KeyType : ValueType]()
+
+  // RIGHT
+  var dict = [KeyType: ValueType]()
+  ```
+
+  </details>
+
+* <a id='return-arrow-spacing'></a>(<a href='#return-arrow-spacing'>link</a>) **Place a space on either side of a return arrow for readability.** [![SwiftLint: return_arrow_whitespace](https://img.shields.io/badge/SwiftLint-return__arrow__whitespace-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#returning-whitespace)
+
+  <details>
+
+  ```swift
+  // WRONG
+  func doSomething()->String {
+    // ...
+  }
+
+  // RIGHT
+  func doSomething() -> String {
+    // ...
+  }
+  ```
+
+  ```swift
+  // WRONG
+  func doSomething(completion: ()->Void) {
+    // ...
+  }
+
+  // RIGHT
+  func doSomething(completion: () -> Void) {
+    // ...
+  }
+  ```
+
+  </details>
+
+* <a id='unnecessary-parens'></a>(<a href='#unnecessary-parens'>link</a>) **Omit unnecessary parentheses.** [![SwiftFormat: redundantParens](https://img.shields.io/badge/SwiftFormat-redundantParens-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantParens)
+
+  <details>
+
+  ```swift
+  // WRONG
+  if (userCount > 0) { ... }
+  switch (someValue) { ... }
+  let evens = userCounts.filter { (number) in number % 2 == 0 }
+  let squares = userCounts.map() { $0 * $0 }
+
+  // RIGHT
+  if userCount > 0 { ... }
+  switch someValue { ... }
+  let evens = userCounts.filter { number in number % 2 == 0 }
+  let squares = userCounts.map { $0 * $0 }
+  ```
+
+  </details>
+  
 **[⬆ back to top](#table-of-contents)**
 
 ## Naming
@@ -194,7 +283,7 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
   </details>
 
-* <a id='hint-at-types'></a>(<a href='#hint-at-types'>link</a>) **By convention, UIKit variable names should include a hint about type. With other types, you may drop redundant type information and rely on the compiler to enforce type matching.**
+* <a id='hint-at-types'></a>(<a href='#hint-at-types'>link</a>) **By convention/legacy, UIKit variable names should include a hint about type. With other types, you may drop redundant type information where possible and rely on the compiler to enforce type matching.**
 
   <details>
 
@@ -202,13 +291,16 @@ Note that brevity is not a primary goal. Code should be made more concise only i
   // WRONG
   let cancel: UIButton
   let title: UILabel
-  let messageString: String
-  let frameRect: CGRect
   
-
   // RIGHT
   let cancelButton: UIButton
   let titleLabel: UILabel
+  
+  // OK
+  let messageString: String
+  let frameRect: CGRect
+  
+  // BETTER
   let message: String
   let frame: CGRect
   ```
@@ -233,7 +325,7 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
   </details>
   
-* <a id='use-nested-types'></a>(<a href='#avoid-class-prefixes'>link</a>) **When type's only use is as a property of another type, nest that type in the type that uses it.**
+* <a id='use-nested-types'></a>(<a href='#avoid-class-prefixes'>link</a>) **When a type's only use is as a property of another type, nest that type in the type that uses it, which allows namespacing rather than long, redundant type names.**
 
   <details>
 
@@ -338,7 +430,7 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
   </details>
 
-* <a id='name-tuple-elements'></a>(<a href='#name-tuple-elements'>link</a>) **Name members of tuples for extra clarity.** Rule of thumb: if you've got more than 2 fields, you should probably be using a struct.
+* <a id='name-tuple-elements'></a>(<a href='#name-tuple-elements'>link</a>) **Name members of tuples for extra clarity.** Rule of thumb: if you've got more than 3 fields, you should probably be using a struct.
 
   <details>
 
@@ -369,91 +461,6 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
   </details>
 
-* <a id='colon-spacing'></a>(<a href='#colon-spacing'>link</a>) **Place the colon immediately after an identifier, followed by a space.** [![SwiftLint: colon](https://img.shields.io/badge/SwiftLint-colon-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#colon)
-
-  <details>
-
-  ```swift
-  // WRONG
-  var something : Double = 0
-
-  // RIGHT
-  var something: Double = 0
-  ```
-
-  ```swift
-  // WRONG
-  class MyClass : SuperClass {
-    // ...
-  }
-
-  // RIGHT
-  class MyClass: SuperClass {
-    // ...
-  }
-  ```
-
-  ```swift
-  // WRONG
-  var dict = [KeyType:ValueType]()
-  var dict = [KeyType : ValueType]()
-
-  // RIGHT
-  var dict = [KeyType: ValueType]()
-  ```
-
-  </details>
-
-* <a id='return-arrow-spacing'></a>(<a href='#return-arrow-spacing'>link</a>) **Place a space on either side of a return arrow for readability.** [![SwiftLint: return_arrow_whitespace](https://img.shields.io/badge/SwiftLint-return__arrow__whitespace-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#returning-whitespace)
-
-  <details>
-
-  ```swift
-  // WRONG
-  func doSomething()->String {
-    // ...
-  }
-
-  // RIGHT
-  func doSomething() -> String {
-    // ...
-  }
-  ```
-
-  ```swift
-  // WRONG
-  func doSomething(completion: ()->Void) {
-    // ...
-  }
-
-  // RIGHT
-  func doSomething(completion: () -> Void) {
-    // ...
-  }
-  ```
-
-  </details>
-
-* <a id='unnecessary-parens'></a>(<a href='#unnecessary-parens'>link</a>) **Omit unnecessary parentheses.** [![SwiftFormat: redundantParens](https://img.shields.io/badge/SwiftFormat-redundantParens-7B0051.svg)](https://github.com/nicklockwood/SwiftFormat/blob/master/Rules.md#redundantParens)
-
-  <details>
-
-  ```swift
-  // WRONG
-  if (userCount > 0) { ... }
-  switch (someValue) { ... }
-  let evens = userCounts.filter { (number) in number % 2 == 0 }
-  let squares = userCounts.map() { $0 * $0 }
-
-  // RIGHT
-  if userCount > 0 { ... }
-  switch someValue { ... }
-  let evens = userCounts.filter { number in number % 2 == 0 }
-  let squares = userCounts.map { $0 * $0 }
-  ```
-
-  </details>
-
 * <a id='unnecessary-enum-arguments'></a> (<a href='#unnecessary-enum-arguments'>link</a>) **Omit enum associated values from case statements when all arguments are unlabeled.** [![SwiftLint: empty_enum_arguments](https://img.shields.io/badge/SwiftLint-empty__enum__arguments-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#empty-enum-arguments)
 
   <details>
@@ -478,6 +485,21 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
   </details>
 
+* <a id='favor-constructors'></a>(<a href='#favor-constructors'>link</a>) **When initializing empty arrays and dictionaries, use the type name in the constructor instead of a type annotation.** 
+
+  <details>
+
+  ```swift
+  // WRONG
+  let myDict: [String: Int] = [:]
+  let array: [Int] = []
+
+  // RIGHT
+  let myDict = [String: Int]()
+  let array = [Int]()
+  ```
+  </details>
+  
 * <a id='favor-constructors'></a>(<a href='#favor-constructors'>link</a>) **Use constructors instead of Make() functions for NSRange and others.** [![SwiftLint: legacy_constructor](https://img.shields.io/badge/SwiftLint-legacy__constructor-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#legacy-constructor)
 
   <details>
@@ -494,6 +516,24 @@ Note that brevity is not a primary goal. Code should be made more concise only i
 
 ### Functions
 
+* <a id='omit-function-void-return'></a>(<a href='#single-line-returns'>link</a>) **Omit `return` for functions that only have one line that is the return value.**
+
+  <details>
+
+  ```swift
+  // WRONG
+  var numItems: Int {
+     return items.count
+  }
+
+  // RIGHT
+  var numItems: Int {
+     items.count
+  }
+  ```
+
+  </details>
+  
 * <a id='omit-function-void-return'></a>(<a href='#omit-function-void-return'>link</a>) **Omit `Void` return types from function definitions.** [![SwiftLint: redundant_void_return](https://img.shields.io/badge/SwiftLint-redundant__void__return-007A87.svg)](https://github.com/realm/SwiftLint/blob/master/Rules.md#redundant-void-return)
 
   <details>
